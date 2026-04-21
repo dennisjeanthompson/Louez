@@ -73,7 +73,13 @@ export const authInstance = betterAuth({
   basePath: '/api/auth',
   secret: env.AUTH_SECRET,
   baseURL: env.AUTH_URL,
-  trustedOrigins: [env.AUTH_URL],
+  trustedOrigins: [
+    env.AUTH_URL,
+    ...(process.env.NODE_ENV !== 'production'
+      ? ['http://localhost:3000', 'http://127.0.0.1:3000']
+      : []),
+  ],
+  trustHost: process.env.AUTH_TRUST_HOST === 'true',
 
   database: drizzleAdapter(db, {
     provider: 'mysql',

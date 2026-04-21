@@ -75,6 +75,8 @@ services:
       - MYSQL_DATABASE=louez
       - MYSQL_USER=louez
       - MYSQL_PASSWORD=${DB_PASSWORD:-louez}
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:

@@ -11,13 +11,18 @@ export async function register() {
   // Only run on the Node.js runtime (not Edge)
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     // Only run database setup in production or when explicitly enabled
+    // Skip in development to avoid connection timeouts
     // This prevents running during builds or when not needed
     const shouldSetup =
-      process.env.NODE_ENV === 'production' || process.env.AUTO_DB_SETUP === 'true'
+      process.env.NODE_ENV === 'production' && process.env.AUTO_DB_SETUP === 'true'
 
     if (shouldSetup) {
-      const { setupDatabase } = await import('@louez/db')
-      await setupDatabase()
+      try {
+        const { setupDatabase } = await import('@louez/db')
+        await setupDatabase()
+      } catch (error) {
+        console.error('[instrumentation] database setup failed (continuing):', error)
+      }
     }
   }
 }

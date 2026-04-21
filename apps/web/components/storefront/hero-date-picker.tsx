@@ -78,7 +78,7 @@ export function HeroDatePicker({
 
   const [startTime, setStartTime] = useState<string>('09:00')
   const [endTime, setEndTime] = useState<string>('18:00')
-  const [activeField, setActiveField] = useState<ActiveField>(null)
+  const [, setActiveField] = useState<ActiveField>(null)
 
   const [startDateOpen, setStartDateOpen] = useState(false)
   const [startTimeOpen, setStartTimeOpen] = useState(false)

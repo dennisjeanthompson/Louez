@@ -69,8 +69,14 @@ interface PostHogProviderProps {
  * adds React context integration for the initialized instance.
  */
 export function PostHogProvider({ children, user }: PostHogProviderProps) {
+  const posthogKey = env.NEXT_PUBLIC_POSTHOG_KEY
+  const isPlaceholderPosthogKey =
+    !posthogKey ||
+    posthogKey === 'disabled' ||
+    posthogKey.startsWith('local-')
+
   // Skip rendering if PostHog is not configured
-  if (!env.NEXT_PUBLIC_POSTHOG_KEY) {
+  if (isPlaceholderPosthogKey) {
     return <>{children}</>
   }
 

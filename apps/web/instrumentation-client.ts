@@ -9,8 +9,14 @@
 
 import posthog from 'posthog-js'
 
-if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_KEY) {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
+const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY
+const isPlaceholderPosthogKey =
+  !posthogKey ||
+  posthogKey === 'disabled' ||
+  posthogKey.startsWith('local-')
+
+if (typeof window !== 'undefined' && !isPlaceholderPosthogKey) {
+  posthog.init(posthogKey, {
     // Route analytics through our reverse proxy to avoid CORS and ad blockers
     // The proxy is configured in next.config.ts rewrites
     api_host: '/ingest',

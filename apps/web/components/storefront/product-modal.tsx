@@ -273,7 +273,7 @@ export function ProductModal({
         displayOrder: tier.displayOrder,
       })) || [];
 
-  const rateTiers: Rate[] = (product.pricingTiers || [])
+  const rateTiers: Rate[] = useMemo(() => (product.pricingTiers || [])
     .filter(
       (tier): tier is PricingTier & { period: number; price: string | number } =>
         typeof tier.period === 'number' &&
@@ -285,7 +285,7 @@ export function ProductModal({
       period: tier.period,
       price: typeof tier.price === 'string' ? parseFloat(tier.price) : tier.price,
       displayOrder: index,
-    }));
+    })), [product.pricingTiers]);
 
   const isRateBased = isRateBasedProduct({
     basePeriodMinutes: product.basePeriodMinutes,
@@ -369,9 +369,11 @@ export function ProductModal({
   }, [hasSeasonalPricings, product.seasonalPricings, startDate]);
 
   const effectiveBasePrice = activeSeasonalPricing ? activeSeasonalPricing.basePrice : price;
-  const effectiveRateTiers: Rate[] = activeSeasonalPricing?.rates.length
-    ? activeSeasonalPricing.rates
-    : rateTiers;
+  const effectiveRateTiers: Rate[] = useMemo(() =>
+    activeSeasonalPricing?.rates.length
+      ? activeSeasonalPricing.rates
+      : rateTiers,
+  [activeSeasonalPricing?.rates, rateTiers]);
 
   const maxQuantity = Math.min(availableQuantity, product.quantity);
   const isUnavailable = availableQuantity === 0;
@@ -718,7 +720,7 @@ export function ProductModal({
   const sortedLegacyTiers =
     legacyTiers.length > 0 ? sortTiersByDuration(legacyTiers) : [];
 
-  const rateRows = useMemo(() => {
+  const rateRows = (() => {
     if (!isRateBased || !product.basePeriodMinutes) return [];
     const basePeriod = product.basePeriodMinutes;
     const baseRow = {
@@ -742,9 +744,9 @@ export function ProductModal({
       }
       return a.price - b.price;
     });
-  }, [isRateBased, effectiveBasePrice, product.basePeriodMinutes, effectiveRateTiers]);
+  })();
 
-  const contextualPeriodMinutes = useMemo(() => {
+  const contextualPeriodMinutes = (() => {
     if (!isRateBased || rateRows.length === 0) return null;
     const periods = [...new Set(rateRows.map((row) => row.periodMinutes))]
       .filter((period) => period > 0)
@@ -756,9 +758,9 @@ export function ProductModal({
     return periodWithinDuration.length > 0
       ? periodWithinDuration[periodWithinDuration.length - 1]
       : periods[0];
-  }, [durationMinutes, isRateBased, rateRows]);
+  })();
 
-  const contextualDisplay = useMemo(() => {
+  const contextualDisplay = (() => {
     if (!isRateBased || !contextualPeriodMinutes || rateRows.length === 0) {
       return null;
     }
@@ -786,7 +788,7 @@ export function ProductModal({
       isFrom: false,
       selectedRateId: baseRow.id,
     };
-  }, [contextualPeriodMinutes, isRateBased, rateRows]);
+  })();
 
   const formatPeriodLabel = (
     periodMinutes: number,

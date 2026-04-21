@@ -64,10 +64,6 @@ export function PricingTiersDisplay({
   // Find which tier is currently applied
   const appliedTierIndex = currentDuration
     ? sortedTiers.reduce((acc, tier, index) => {
-        const tierDiscount =
-          typeof tier.discountPercent === 'string'
-            ? parseFloat(tier.discountPercent ?? '0')
-            : tier.discountPercent
         return currentDuration >= tier.minDuration ? index : acc
       }, -1)
     : -1
