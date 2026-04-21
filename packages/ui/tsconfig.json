@@ -1,5 +1,5 @@
 {
-  "extends": "@louez/config/typescript/library",
+  "extends": "../config/typescript/library.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",

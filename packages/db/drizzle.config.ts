@@ -1,5 +1,8 @@
-import 'dotenv/config'
+import { config } from 'dotenv'
 import { defineConfig } from 'drizzle-kit'
+// Drizzle commands run in packages/db; load env files from repo root.
+config({ path: '../../.env.local' })
+config({ path: '../../.env' })
 
 export default defineConfig({
   schema: './src/schema.ts',
